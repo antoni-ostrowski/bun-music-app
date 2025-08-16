@@ -5,7 +5,7 @@ myapp
 out
 dist
 *.tgz
-
+index
 # code coverage
 coverage
 *.lcov

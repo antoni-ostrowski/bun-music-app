@@ -6,12 +6,15 @@
  */
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { App } from './App'
+import { App } from './app/App'
+import { MyTrpcProvider } from './app/trpc/provider'
 import './index.css'
 const elem = document.getElementById('root')!
 const app = (
   <StrictMode>
-    <App />
+    <MyTrpcProvider>
+      <App />
+    </MyTrpcProvider>
   </StrictMode>
 )
 

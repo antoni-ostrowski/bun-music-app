@@ -1,6 +1,9 @@
+// import open from 'open'
+import { createHTTPServer } from '@trpc/server/adapters/standalone'
 import { serve } from 'bun'
+import cors from 'cors'
 import index from './index.html'
-
+import { appRouter } from './trpc'
 const server = serve({
   routes: {
     '/*': index,
@@ -45,5 +48,14 @@ const server = serve({
     console: true,
   },
 })
+const trpcServer = createHTTPServer({
+  middleware: cors(),
+  router: appRouter,
+})
 
+trpcServer.listen(3001)
+console.log('🚀 Trpc running at ', 3001)
 console.log(`🚀 Server running at ${server.url}`)
+// void open('http://localhost:3000').then(() => {
+//   console.log('Browser opened')
+// })
