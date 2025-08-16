@@ -1,49 +1,49 @@
-import { serve } from "bun";
-import index from "./index.html";
+import { serve } from 'bun'
+import index from './index.html'
 
 const server = serve({
   routes: {
-    "/*": index,
-    "/file": async (req) => {
-      const rangeHeader = req.headers.get("Range");
+    '/*': index,
+    '/file': (req) => {
+      const rangeHeader = req.headers.get('Range')
       const file = Bun.file(
-        "/Users/antoni-ostrowski/Library/Mobile Documents/com~apple~CloudDocs/Torë it apart_(feat. SeptembersRich) (prod. T99)_(WWE).mp3",
-      );
+        '/Users/antoni-ostrowski/Library/Mobile Documents/com~apple~CloudDocs/Torë it apart_(feat. SeptembersRich) (prod. T99)_(WWE).mp3'
+      )
 
-      console.log("hit file route");
+      console.log('hit file route')
 
       if (rangeHeader) {
-        const parts = rangeHeader!.split("=")[1].split("-");
-        const start = parseInt(parts[0], 10);
+        const parts = rangeHeader.split('=')[1].split('-')
+        const start = parseInt(parts[0], 10)
         // if no end specified, we set it to the end of the file
-        const end = parts[1] ? parseInt(parts[1], 10) : file.size - 1;
+        const end = parts[1] ? parseInt(parts[1], 10) : file.size - 1
 
         return new Response(file.slice(start, end + 1), {
           status: 206,
           headers: {
-            "Content-Range": `bytes ${start}-${end}/${file.size}`,
-            "Accept-Ranges": "bytes",
+            'Content-Range': `bytes ${start}-${end}/${file.size}`,
+            'Accept-Ranges': 'bytes',
           },
-        });
+        })
       } else {
         // If no Range header, serve the full file
-        console.log("Serving full file");
+        console.log('Serving full file')
         return new Response(file, {
           headers: {
-            "Accept-Ranges": "bytes",
+            'Accept-Ranges': 'bytes',
           },
-        });
+        })
       }
     },
   },
 
-  development: process.env.NODE_ENV !== "production" && {
+  development: process.env.NODE_ENV !== 'production' && {
     // Enable browser hot reloading in development
     hmr: true,
 
     // Echo console logs from the browser to the server
     console: true,
   },
-});
+})
 
-console.log(`🚀 Server running at ${server.url}`);
+console.log(`🚀 Server running at ${server.url}`)

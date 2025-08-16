@@ -1,8 +1,10 @@
+import { Button } from './components/ui/button'
+
 export function App() {
   return (
-    <div className="app">
-      fjkdsjfksld
-      <audio controls src={"http://localhost:3000/file"}></audio>
+    <div className="flex flex-col gap-2">
+      <h1>Testing</h1>
+      <Button variant={'outline'}>click me</Button>
     </div>
-  );
+  )
 }
