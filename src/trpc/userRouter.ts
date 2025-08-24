@@ -5,6 +5,10 @@ import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { t } from './router'
 export const userRouter = t.router({
+  getPreferences: t.procedure.query(async () => {
+    const preferences = await db.query.preferences.findFirst()
+    return preferences
+  }),
   addSource: t.procedure
     .input(z.object({ source: z.string() }))
     .mutation(async ({ input }) => {

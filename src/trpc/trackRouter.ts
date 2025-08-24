@@ -1,6 +1,7 @@
 import { db } from '@/db'
 import { preferences, tracks } from '@/db/schema'
 import { tryCatch } from '@/lib/utils'
+import { eq } from 'drizzle-orm'
 import { promises as fs } from 'fs'
 import { parseFile, type IAudioMetadata } from 'music-metadata'
 import { extname, join } from 'path'
@@ -8,6 +9,9 @@ import { t } from './router'
 export const trackRouter = t.router({
   hello: t.procedure.query(() => {
     return { test: 'Hello, world!' }
+  }),
+  listAllTracks: t.procedure.query(async () => {
+    return db.query.tracks.findMany()
   }),
   syncTracks: t.procedure.mutation(async () => {
     const [userPreferences, userPreferencesError] = await tryCatch(
@@ -29,7 +33,7 @@ export const trackRouter = t.router({
       console.log('audio files - ', audioFiles)
       await processTrackInsertion(audioFiles)
     }
-
+    await scanDbForDeletedTracks()
     return { ok: true }
   }),
 })
@@ -84,13 +88,19 @@ async function getTracksFromSourceUrl(sourceUrl: string) {
             )
             continue
           }
+          const res = await db
+            .select()
+            .from(tracks)
+            .where(eq(tracks.path, fullPath))
 
-          audioFiles.push({
-            entryName: entry.name,
-            path: fullPath,
-            sourceUrl: sourceUrl,
-            metadata: fileMetadata,
-          })
+          if (res.length === 0) {
+            audioFiles.push({
+              entryName: entry.name,
+              path: fullPath,
+              sourceUrl: sourceUrl,
+              metadata: fileMetadata,
+            })
+          }
         }
       }
     }
@@ -148,4 +158,14 @@ async function getFileMetadata(filePath: string) {
   // console.log(`metadata for ${filePath}`, metadata)
 
   return metadata
+}
+async function scanDbForDeletedTracks() {
+  const dbTracks = await db.query.tracks.findMany()
+  for (const track of dbTracks) {
+    const { path, id } = track
+    const exists = await fs.exists(path)
+    if (!exists) {
+      await db.delete(tracks).where(eq(tracks.id, id))
+    }
+  }
 }
