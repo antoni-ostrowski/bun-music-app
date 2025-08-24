@@ -7,13 +7,11 @@ import { appRouter } from './trpc'
 const server = serve({
   routes: {
     '/*': index,
-    '/file': (req) => {
+    '/file/:filePath': (req) => {
       const rangeHeader = req.headers.get('Range')
-      const file = Bun.file(
-        '/Users/antoni-ostrowski/Library/Mobile Documents/com~apple~CloudDocs/Torë it apart_(feat. SeptembersRich) (prod. T99)_(WWE).mp3'
-      )
-
-      console.log('hit file route')
+      console.log('req path - ', decodeURIComponent(req.params.filePath))
+      const file = Bun.file(decodeURIComponent(req.params.filePath))
+      console.log('hit file route - ', file.name)
 
       if (rangeHeader) {
         const parts = rangeHeader.split('=')[1].split('-')

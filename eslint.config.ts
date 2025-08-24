@@ -2,6 +2,9 @@ import react from 'eslint-plugin-react'
 import tseslint from 'typescript-eslint'
 export default tseslint.config(
   {
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': 'off',
+    },
     plugins: {
       react,
     },

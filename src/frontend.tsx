@@ -32,6 +32,7 @@ import ReactDOM from 'react-dom/client'
 
 // Import the generated route tree
 import { routeTree } from './app/routeTree.gen'
+import { MyTrpcProvider } from './app/trpc/provider'
 
 // Create a new router instance
 const router = createRouter({ routeTree })
@@ -49,7 +50,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <MyTrpcProvider>
+        <RouterProvider router={router} />
+      </MyTrpcProvider>
     </StrictMode>
   )
 }
