@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "generate-routes": "tsr generate",
+    "watch-routes": "tsr watch",
     "db:push": "npx drizzle-kit push",
-    "dev": "bun --hot src/index.tsx",
-    "build": "bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
+    "dev": "bun run watch-routes & bun --hot src/index.tsx",
+    "build": "bun run generate-routes && bun build ./src/index.html --outdir=dist --sourcemap --target=browser --minify --define:process.env.NODE_ENV='\"production\"' --env='BUN_PUBLIC_*'",
     "start": "NODE_ENV=production bun src/index.tsx"
   },
   "dependencies": {
@@ -15,6 +17,8 @@
     "@tailwindcss/cli": "^4.1.12",
     "@tailwindcss/postcss": "^4.1.12",
     "@tanstack/react-query": "^5.85.3",
+    "@tanstack/react-router": "^1.131.27",
+    "@tanstack/react-router-devtools": "^1.131.27",
     "@trpc/client": "^11.4.4",
     "@trpc/server": "^11.4.4",
     "@trpc/tanstack-react-query": "^11.4.4",
@@ -38,6 +42,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@tanstack/router-cli": "^1.131.27",
     "@types/bun": "^1.2.20",
     "@types/cors": "^2.8.19",
     "@types/react": "^19.1.10",
