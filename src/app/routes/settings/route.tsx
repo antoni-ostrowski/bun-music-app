@@ -13,6 +13,9 @@ function RouteComponent() {
   const [input, setInput] = useState('')
   const trpc = useTRPC()
   const { mutate } = useMutation(trpc.track.syncTracks.mutationOptions())
+  const { mutate: addSourceFunc } = useMutation(
+    trpc.user.addSource.mutationOptions()
+  )
   return (
     <div>
       Hello "/settings"!
@@ -22,6 +25,9 @@ function RouteComponent() {
         {input}
         <p>enter full path to directory with your music</p>
         <Input onChange={(e) => setInput(e.target.value)} />
+        <Button onClick={() => addSourceFunc({ source: input })}>
+          add source
+        </Button>
       </div>
       <Button onClick={() => mutate()}>sycn track with db</Button>
     </div>
