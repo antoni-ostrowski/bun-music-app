@@ -1,5 +1,12 @@
+import type { Track } from '@/db/schema'
 import { Store } from '@tanstack/react-store'
 
-export const playerStore = new Store({
-  filePath: '',
+type PlayerStore = {
+  queue: string[]
+  currentTrack: Track | undefined
+}
+
+export const playerStore = new Store<PlayerStore>({
+  queue: [],
+  currentTrack: undefined,
 })
