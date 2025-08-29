@@ -2,12 +2,13 @@
 import { createHTTPServer } from '@trpc/server/adapters/standalone'
 import { serve } from 'bun'
 import cors from 'cors'
+import { parseFile } from 'music-metadata'
 import index from './index.html'
 import { appRouter } from './trpc'
 const server = serve({
   routes: {
     '/*': index,
-    '/file/:filePath': (req) => {
+    '/music/:filePath': (req) => {
       const rangeHeader = req.headers.get('Range')
       console.log('req path - ', decodeURIComponent(req.params.filePath))
       const file = Bun.file(decodeURIComponent(req.params.filePath))
@@ -35,6 +36,27 @@ const server = serve({
           },
         })
       }
+    },
+    '/artwork/:filePath': async (req) => {
+      const filePath = decodeURIComponent(req.params.filePath)
+      const metadata = await parseFile(filePath)
+      const picture = metadata.common.picture?.[0]
+      if (!picture) {
+        return new Response('No picture found', { status: 404 })
+      }
+      const artworkData = picture.data
+      const artworkType = picture.format
+
+      const buffer = Buffer.from(artworkData)
+
+      const blob = new Blob([buffer], { type: artworkType })
+
+      return new Response(blob, {
+        headers: {
+          'Content-Type': artworkType,
+          'Content-Length': blob.size.toString(),
+        },
+      })
     },
   },
 

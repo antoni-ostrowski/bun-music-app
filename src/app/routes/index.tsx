@@ -1,3 +1,4 @@
+import Track from '@/components/track/track'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTRPC } from '../trpc/context'
@@ -12,11 +13,7 @@ function RouteComponent() {
   return (
     <div>
       {data?.map((track) => {
-        return (
-          <div>
-            track - {track.title} from - {track.source_url}
-          </div>
-        )
+        return <Track key={track.id} track={track} />
       })}
     </div>
   )
