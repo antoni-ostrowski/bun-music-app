@@ -5,6 +5,7 @@ import cors from 'cors'
 import { parseFile } from 'music-metadata'
 import index from './index.html'
 import { appRouter } from './trpc'
+
 const server = serve({
   routes: {
     '/*': index,

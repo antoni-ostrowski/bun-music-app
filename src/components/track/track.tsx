@@ -1,6 +1,6 @@
 import { playerStore } from '@/app/player/store'
 import type { tracks } from '@/db/schema'
-import { makeArtworkUrl, makeMusicUrl } from '@/lib/utils'
+import { makeArtworkUrl } from '@/lib/utils'
 import { Button } from '../ui/button'
 
 export default function Track({
@@ -16,12 +16,21 @@ export default function Track({
         onClick={() => {
           playerStore.setState({
             ...playerStore.state,
-            trackUrl: makeMusicUrl(track.path),
             currentTrack: track,
           })
         }}
       >
         set to store
+      </Button>
+      <Button
+        onClick={() => {
+          playerStore.setState({
+            ...playerStore.state,
+            queue: [...playerStore.state.queue, track],
+          })
+        }}
+      >
+        add to queue
       </Button>
     </div>
   )

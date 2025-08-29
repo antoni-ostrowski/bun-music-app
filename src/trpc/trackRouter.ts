@@ -14,29 +14,32 @@ export const trackRouter = t.router({
     return db.query.tracks.findMany()
   }),
   syncTracks: t.procedure.mutation(async () => {
-    const [userPreferences, userPreferencesError] = await tryCatch(
-      getUsersPreferences()
-    )
-    if (userPreferencesError) {
-      console.log(userPreferencesError)
-      throw new Error(userPreferencesError.message, {
-        cause: userPreferencesError,
-      })
-    }
-    console.log('sync tracks')
-    const sourceUrls = userPreferences[0]?.preferences?.source_urls ?? []
-
-    console.log('source urls - ', sourceUrls)
-
-    for (const sourceUrl of sourceUrls) {
-      const audioFiles = await getTracksFromSourceUrl(sourceUrl)
-      console.log('audio files - ', audioFiles)
-      await processTrackInsertion(audioFiles)
-    }
-    await scanDbForDeletedTracks()
-    return { ok: true }
+    return await syncTracks()
   }),
 })
+export async function syncTracks() {
+  const [userPreferences, userPreferencesError] = await tryCatch(
+    getUsersPreferences()
+  )
+  if (userPreferencesError) {
+    console.log(userPreferencesError)
+    throw new Error(userPreferencesError.message, {
+      cause: userPreferencesError,
+    })
+  }
+  console.log('sync tracks')
+  const sourceUrls = userPreferences[0]?.preferences?.source_urls ?? []
+
+  console.log('source urls - ', sourceUrls)
+
+  for (const sourceUrl of sourceUrls) {
+    const audioFiles = await getTracksFromSourceUrl(sourceUrl)
+    console.log('audio files - ', audioFiles)
+    await processTrackInsertion(audioFiles)
+  }
+  await scanDbForDeletedTracks()
+  return { ok: true }
+}
 async function getUsersPreferences() {
   const res = await db.select().from(preferences)
   if (!res) {

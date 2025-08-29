@@ -2,7 +2,7 @@ import type { Track } from '@/db/schema'
 import { Store } from '@tanstack/react-store'
 
 type PlayerStore = {
-  queue: string[]
+  queue: Track[]
   currentTrack: Track | undefined
 }
 
