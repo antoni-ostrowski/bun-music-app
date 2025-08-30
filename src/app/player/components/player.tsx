@@ -129,7 +129,7 @@ export default function Player() {
           </div>
           <div>
             {queue.map((queueTrack) => {
-              return <Track track={queueTrack} key={`queue-${queueTrack.id}`} />
+              return <Track track={queueTrack} key={crypto.randomUUID()} />
             })}
           </div>
         </>

@@ -1,4 +1,4 @@
-import Track from '@/components/track/track'
+import TrackTable from '@/components/track-table/track-table'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useTRPC } from '../trpc/context'
@@ -12,9 +12,10 @@ function RouteComponent() {
   const { data } = useQuery(trpc.track.listAllTracks.queryOptions())
   return (
     <div>
-      {data?.map((track) => {
+      {/*{data?.map((track) => {
         return <Track key={track.id} track={track} />
-      })}
+      })}*/}
+      {data && <TrackTable tracks={data} />}
     </div>
   )
 }
