@@ -20,7 +20,10 @@ const columns = [
   columnHelper.display({
     id: 'artwork',
     cell: (props) => (
-      <img className="w-10" src={makeArtworkUrl(props.row.original.path)} />
+      <img
+        className="w-10 min-w-10"
+        src={makeArtworkUrl(props.row.original.path)}
+      />
     ),
   }),
   columnHelper.accessor('artist', {

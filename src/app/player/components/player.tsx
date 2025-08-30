@@ -79,8 +79,8 @@ export default function Player() {
     <Card>
       {currentTrack && (
         <>
-          <img className="w-40" src={makeArtworkUrl(currentTrack.path)} />
-          <div>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <img className="w-40" src={makeArtworkUrl(currentTrack.path)} />
             <h1 className="text-center">{currentTrack.title}</h1>
             <h2 className="text-center">{currentTrack.artist}</h2>
           </div>

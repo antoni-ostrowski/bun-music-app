@@ -18,6 +18,7 @@ export const trackRouter = t.router({
   }),
 })
 export async function syncTracks() {
+  console.log('[SYNC] Started syncing...')
   const [userPreferences, userPreferencesError] = await tryCatch(
     getUsersPreferences()
   )
@@ -27,14 +28,20 @@ export async function syncTracks() {
       cause: userPreferencesError,
     })
   }
-  console.log('sync tracks')
+  console.log('[SYNC] Fetched preferences')
   const sourceUrls = userPreferences[0]?.preferences?.source_urls ?? []
 
-  console.log('source urls - ', sourceUrls)
+  console.log('[SYNC] Source urls found')
+  console.dir(sourceUrls, { depth: null })
 
+  console.log('[SYNC] Starting iteration on source urls')
   for (const sourceUrl of sourceUrls) {
     const audioFiles = await getTracksFromSourceUrl(sourceUrl)
-    console.log('audio files - ', audioFiles)
+    console.log('[SYNC] Tracks found in the ', sourceUrl)
+    audioFiles.forEach((item) => {
+      console.log('[SYNC] Track found - ', item.entryName)
+    })
+    console.log('[SYNC] Inserting found tracks into db')
     await processTrackInsertion(audioFiles)
   }
   await scanDbForDeletedTracks()
@@ -72,13 +79,16 @@ async function getTracksFromSourceUrl(sourceUrl: string) {
 
     for (const entry of entries) {
       const fullPath = join(sourceUrl, entry.name)
+      console.log('[SYNC] Found file - ', entry.name)
 
       if (entry.isDirectory()) {
+        console.log('[SYNC] Its a dir, recurse into it')
         // If it's a directory, recurse into it
         const nestedAudioFiles = await getTracksFromSourceUrl(fullPath)
         audioFiles = audioFiles.concat(nestedAudioFiles)
       } else if (entry.isFile()) {
         // If it's a file, check its extension
+        console.log('[SYNC] Its a file, processing it')
         const fileExtension = extname(entry.name).toLowerCase()
         if (AUDIO_EXTENSIONS.has(fileExtension)) {
           const [fileMetadata, fileMetadataError] = await tryCatch(
@@ -91,12 +101,14 @@ async function getTracksFromSourceUrl(sourceUrl: string) {
             )
             continue
           }
+          console.log('[SYNC] Found file metadata')
           const res = await db
             .select()
             .from(tracks)
             .where(eq(tracks.path, fullPath))
 
           if (res.length === 0) {
+            console.log('[SYNC] File is a new track not existing in db')
             audioFiles.push({
               entryName: entry.name,
               path: fullPath,
@@ -134,13 +146,16 @@ async function insertTrackInDb(track: AudioFile) {
       .onConflictDoNothing()
   )
   if (dbError) {
-    console.log('failed to insert to db', dbError)
+    console.log('[SYNC] failed to insert to db', track)
+    console.dir(dbError)
     throw new Error('failed to insert to db', dbError)
   }
   return { ok: true }
 }
 async function processTrackInsertion(audioFiles: AudioFile[]) {
+  console.log('[SYNC] Strating tracks insertion')
   for (const audioFile of audioFiles) {
+    console.log('[SYNC] Inserting track - ', audioFile.entryName)
     const { path, metadata, entryName } = audioFile
     const [result, error] = await tryCatch(
       insertTrackInDb({
@@ -154,6 +169,7 @@ async function processTrackInsertion(audioFiles: AudioFile[]) {
       console.log('failed to insert track to db')
       throw new Error('failed to insert track to db')
     }
+    console.log('[SYNC] Track inserted successfully')
   }
 }
 async function getFileMetadata(filePath: string) {

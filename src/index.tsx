@@ -43,7 +43,8 @@ const server = serve({
       const metadata = await parseFile(filePath)
       const picture = metadata.common.picture?.[0]
       if (!picture) {
-        return new Response('No picture found', { status: 404 })
+        const file = Bun.file('src/placeholder.webp')
+        return new Response(file)
       }
       const artworkData = picture.data
       const artworkType = picture.format
@@ -60,7 +61,6 @@ const server = serve({
       })
     },
   },
-
   development: process.env.NODE_ENV !== 'production' && {
     // Enable browser hot reloading in development
     hmr: true,

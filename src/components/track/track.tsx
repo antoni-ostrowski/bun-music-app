@@ -1,6 +1,7 @@
 import { playerStore } from '@/app/player/store'
 import type { tracks } from '@/db/schema'
 import { makeArtworkUrl } from '@/lib/utils'
+import { Play } from 'lucide-react'
 import { Button } from '../ui/button'
 
 export default function Track({
@@ -20,9 +21,9 @@ export default function Track({
           })
         }}
       >
-        set to store
+        <Play />
       </Button>
-      <Button
+      {/*<Button
         onClick={() => {
           playerStore.setState({
             ...playerStore.state,
@@ -30,8 +31,8 @@ export default function Track({
           })
         }}
       >
-        add to queue
-      </Button>
+        <ListEnd />
+      </Button>*/}
     </div>
   )
 }
