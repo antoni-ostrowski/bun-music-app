@@ -6,6 +6,8 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { useRef } from 'react'
 import {
   Table,
   TableBody,
@@ -51,9 +53,19 @@ export default function TrackTable({ tracks }: { tracks: Track[] }) {
     getCoreRowModel: getCoreRowModel(),
   })
   console.log('tracks in table - ', tracks)
+
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  const virtualizer = useVirtualizer({
+    count: table.getRowModel().rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 60,
+    overscan: 40,
+  })
+
   return (
     <>
-      <div>
+      <div ref={parentRef}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -75,21 +87,33 @@ export default function TrackTable({ tracks }: { tracks: Track[] }) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              <>
+                {virtualizer.getVirtualItems().map((virtualRow, index) => {
+                  const row = table.getRowModel().rows[virtualRow.index]
+                  if (!row) return null
+                  return (
+                    <TableRow
+                      style={{
+                        height: `${virtualRow.size}px`,
+                        transform: `translateY(${
+                          virtualRow.start - index * virtualRow.size
+                        }px)`,
+                      }}
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
+                })}
+              </>
             ) : (
               <TableRow>
                 <TableCell
