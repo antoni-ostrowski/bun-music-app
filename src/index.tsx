@@ -4,6 +4,7 @@ import { serve } from 'bun'
 import cors from 'cors'
 import { parseFile } from 'music-metadata'
 import index from './index.html'
+import { tryCatch } from './lib/utils'
 import { appRouter } from './trpc'
 
 const server = serve({
@@ -40,9 +41,20 @@ const server = serve({
     },
     '/artwork/:filePath': async (req) => {
       const filePath = decodeURIComponent(req.params.filePath)
-      const metadata = await parseFile(filePath)
+      const [metadata, metadataErr] = await tryCatch(parseFile(filePath))
+      if (metadataErr) {
+        console.log(
+          '[---ARTWORK---] Error parsing metadata, returning placeholder',
+          metadataErr
+        )
+        const file = Bun.file('src/placeholder.webp')
+        return new Response(file)
+      }
       const picture = metadata.common.picture?.[0]
       if (!picture) {
+        console.log(
+          '[---ARTWORK---] No track artwork found, returning placeholder'
+        )
         const file = Bun.file('src/placeholder.webp')
         return new Response(file)
       }
