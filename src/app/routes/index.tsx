@@ -9,9 +9,12 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   const trpc = useTRPC()
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     ...trpc.track.listAllTracks.queryOptions(),
     placeholderData: keepPreviousData,
   })
-  return <div>{data ? <TrackTable tracks={data} /> : <div>Loaidng</div>}</div>
+  if (isLoading) {
+    return <div> LOADING</div>
+  }
+  return <div>{data && <TrackTable tracks={data} />}</div>
 }

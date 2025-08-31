@@ -3,7 +3,14 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import type { Track as TrackType } from '@/db/schema'
 import { makeArtworkUrl, makeMusicUrl } from '@/lib/utils'
-import { Pause, Play, SkipBack, SkipForward } from 'lucide-react'
+import {
+  Pause,
+  Play,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeOff,
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { playerStore } from '../store'
 
@@ -71,10 +78,18 @@ export default function Player() {
     if (audioRef.current && queue[0]?.path) {
       const nextTrackFromQueue = queue[0]
       setCurrentTrack(nextTrackFromQueue)
-      setQueue((prevQueue) => prevQueue.splice(0, 1))
+      setQueue((prevQueue) => {
+        const nextQueue = prevQueue.shift()
+        return nextQueue ? [nextQueue, ...prevQueue] : []
+      })
     }
   }
-
+  function handleVolumeChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!audioRef.current) return
+    const volume = parseFloat(event.target.value)
+    console.log('new volume - ', volume)
+    audioRef.current.volume = volume
+  }
   return (
     <Card>
       {currentTrack && (
@@ -100,10 +115,21 @@ export default function Player() {
               ref={progressBarRef}
               type="range"
               max={currentTrack.durationInMs! / 1000}
-              defaultValue="0"
               value={currentTime} // Changed from defaultValue to value
               onChange={handleSliderChange}
             />
+            <div className="flex w-full flex-row items-center justify-center gap-2">
+              <VolumeOff size={15} />
+              <input
+                className="w-[70%] bg-gray-300"
+                type="range"
+                max={1}
+                min={0}
+                step={0.01}
+                onChange={handleVolumeChange}
+              />
+              <Volume2 size={15} />
+            </div>
             <div className="flex flex-row gap-4">
               <Button variant={'outline'} className="w-min cursor-pointer">
                 <SkipBack />

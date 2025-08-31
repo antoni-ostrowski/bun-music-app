@@ -66,7 +66,7 @@ export default function TrackTable({ tracks }: { tracks: Track[] }) {
   return (
     <>
       <div ref={parentRef}>
-        <Table>
+        <Table style={{ tableLayout: 'fixed', width: '100%' }}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
