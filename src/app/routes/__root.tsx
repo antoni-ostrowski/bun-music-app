@@ -10,12 +10,10 @@ export const Route = createRootRoute({
       <SidebarLeft />
 
       <SidebarInset>
-        <div className="border border-red-500">
-          TEST INSERT <Outlet />
-        </div>
+        <Outlet />
       </SidebarInset>
       <SidebarRight />
-      <TanStackRouterDevtools />
+      <TanStackRouterDevtools position="bottom-right" />
     </SidebarProvider>
   ),
 })

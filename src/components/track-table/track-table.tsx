@@ -52,7 +52,7 @@ export default function TrackTable({ tracks }: { tracks: Track[] }) {
     data: tracks,
     getCoreRowModel: getCoreRowModel(),
   })
-  console.log('tracks in table - ', tracks)
+  // console.log('tracks in table - ', tracks)
 
   const parentRef = useRef<HTMLDivElement>(null)
 

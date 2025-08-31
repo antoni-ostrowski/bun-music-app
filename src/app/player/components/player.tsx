@@ -1,18 +1,16 @@
 import Track from '@/components/track/track'
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import type { Track as TrackType } from '@/db/schema'
-import { makeArtworkUrl, makeMusicUrl } from '@/lib/utils'
-import {
-  Pause,
-  Play,
-  SkipBack,
-  SkipForward,
-  Volume2,
-  VolumeOff,
-} from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { playerStore } from '../store'
+import type { TrackType } from '@/db/schema'
+import { makeMusicUrl } from '@/lib/utils'
+import { useRef, useState, type RefObject } from 'react'
+import usePlayerStore from '../usePlayerStore'
+import PlaybackControls from './playback-controls'
+import ProgressBar from './progress-bar'
+import TrackMetadata from './track-metadata'
+import VolumeControls from './volume-controls'
+
+export type AudioRefType = RefObject<HTMLAudioElement | null>
+export type ProgressBarRefType = RefObject<HTMLInputElement | null>
 
 export default function Player() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -22,19 +20,17 @@ export default function Player() {
   const [queue, setQueue] = useState<TrackType[]>([])
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressBarRef = useRef<HTMLInputElement>(null)
-  const [currentTime, setCurrentTime] = useState(0) // New state for current time
+  const [currentTime, setCurrentTime] = useState(0)
 
-  useEffect(() => {
-    const unsub = playerStore.subscribe(
-      ({ currentVal: { currentTrack, queue } }) => {
-        if (audioRef.current?.src) console.log('alrd contains some track')
-        setCurrentTrack(currentTrack)
-        setQueue(queue)
-        console.log('new path - ', currentTrack?.path)
-      }
-    )
-    return () => unsub()
-  }, [audioRef.current])
+  usePlayerStore({
+    audioRef,
+    setCurrentTrack: (track: TrackType) => {
+      setCurrentTrack(track)
+    },
+    setQueue: (queue: TrackType[]) => {
+      setQueue(queue)
+    },
+  })
 
   function onLoadedMetadata() {
     const seconds = audioRef.current?.duration
@@ -44,16 +40,7 @@ export default function Player() {
       }
     }
   }
-  function handleSliderChange() {
-    // console.log(progressBarRef.current?.value)
-    if (audioRef.current && progressBarRef.current) {
-      const newTime = Number(progressBarRef.current.value)
-      audioRef.current.currentTime = newTime
-      setCurrentTime(newTime)
-    }
-  }
 
-  // New function to update the slider's value as the audio plays
   function handleTimeUpdate() {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime)
@@ -72,6 +59,7 @@ export default function Player() {
   }
   function handleEnded() {
     console.log('Audio ended. Time to play the next song!')
+    handleSkipForward()
   }
   function handleSkipForward() {
     console.log('Skipping forward')
@@ -84,21 +72,11 @@ export default function Player() {
       })
     }
   }
-  function handleVolumeChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (!audioRef.current) return
-    const volume = parseFloat(event.target.value)
-    console.log('new volume - ', volume)
-    audioRef.current.volume = volume
-  }
+
   return (
-    <Card>
+    <>
       {currentTrack && (
-        <>
-          <div className="flex flex-col items-center justify-center gap-2">
-            <img className="w-40" src={makeArtworkUrl(currentTrack.path)} />
-            <h1 className="text-center">{currentTrack.title}</h1>
-            <h2 className="text-center">{currentTrack.artist}</h2>
-          </div>
+        <Card className="p-5">
           <audio
             ref={audioRef}
             src={makeMusicUrl(currentTrack.path)}
@@ -107,59 +85,37 @@ export default function Player() {
             onPause={handlePause}
             onEnded={handleEnded}
             onLoadedMetadata={onLoadedMetadata}
-            onTimeUpdate={handleTimeUpdate} // Added this event handler
-          ></audio>
+            onTimeUpdate={handleTimeUpdate}
+          />
+          <TrackMetadata {...{ currentTrack }} />
           <div className="flex w-full flex-col items-center justify-center gap-5">
-            <input
-              className="w-[80%] bg-gray-300"
-              ref={progressBarRef}
-              type="range"
-              max={currentTrack.durationInMs! / 1000}
-              value={currentTime} // Changed from defaultValue to value
-              onChange={handleSliderChange}
+            <ProgressBar
+              {...{
+                currentTrack,
+                audioRef,
+                handlePause,
+                handlePlay,
+                progressBarRef,
+                currentTime,
+                setCurrentTime,
+              }}
             />
-            <div className="flex w-full flex-row items-center justify-center gap-2">
-              <VolumeOff size={15} />
-              <input
-                className="w-[70%] bg-gray-300"
-                type="range"
-                max={1}
-                min={0}
-                step={0.01}
-                onChange={handleVolumeChange}
-              />
-              <Volume2 size={15} />
-            </div>
-            <div className="flex flex-row gap-4">
-              <Button variant={'outline'} className="w-min cursor-pointer">
-                <SkipBack />
-              </Button>
-              <Button
-                variant={'outline'}
-                className="w-min cursor-pointer"
-                onClick={() => {
-                  if (isPlaying) handlePause()
-                  else handlePlay()
-                }}
-              >
-                {isPlaying ? <Pause /> : <Play />}
-              </Button>
-              <Button
-                variant={'outline'}
-                className="w-min cursor-pointer"
-                onClick={handleSkipForward}
-              >
-                <SkipForward />
-              </Button>
-            </div>
+
+            <VolumeControls audioRef={audioRef} />
+
+            <PlaybackControls
+              {...{ isPlaying, handlePause, handlePlay, handleSkipForward }}
+            />
           </div>
+
+          {/*here make a MINI table for track in queue, because drag and drop will be nice here too*/}
           <div>
             {queue.map((queueTrack) => {
               return <Track track={queueTrack} key={crypto.randomUUID()} />
             })}
           </div>
-        </>
+        </Card>
       )}
-    </Card>
+    </>
   )
 }

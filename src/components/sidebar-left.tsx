@@ -1,47 +1,35 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
 } from '@/components/ui/sidebar'
 import { Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Minimize, Settings } from 'lucide-react'
+const iconSize = 40
 
 export default function SidebarLeft() {
   return (
-    <Sidebar
-      className="sticky top-0 h-svh border border-blue-500 lg:flex"
-      collapsible="none"
-    >
-      <SidebarHeader className="border-sidebar-border h-16 border-b">
-        <p>test</p>
-        <div className="flex gap-2 p-2">
-          <Link to="/" className="[&.active]:font-bold">
-            Home
-          </Link>{' '}
-          <Link to="/settings" className="[&.active]:font-bold">
-            Settings
-          </Link>{' '}
-        </div>
-        <hr />
-      </SidebarHeader>
+    <Sidebar className="sticky top-0 h-svh border lg:flex" collapsible="none">
       <SidebarContent>
-        <SidebarSeparator className="mx-0" />
-      </SidebarContent>
-      <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <SidebarMenuButton>
+            <Minimize size={iconSize} />
+            <Link to="/">
+              <SidebarItemText text="Start" />
+            </Link>
+          </SidebarMenuButton>
+          <SidebarMenuButton>
+            <Settings size={iconSize} />
+            <Link to="/settings">
+              <SidebarItemText text="Settings" />
+            </Link>
+          </SidebarMenuButton>
         </SidebarMenu>
-      </SidebarFooter>
+      </SidebarContent>
     </Sidebar>
   )
+}
+function SidebarItemText({ text }: { text: string }) {
+  return <h1 className="text-md font-semibold">{text}</h1>
 }

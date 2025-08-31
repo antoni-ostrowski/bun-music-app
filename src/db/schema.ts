@@ -30,4 +30,4 @@ export const tracks = sqliteTable('tracks', {
     .$defaultFn(() => getCurrentUnixTimestamp()),
 })
 export const t = tracks.$inferSelect
-export type Track = typeof t
+export type TrackType = typeof t

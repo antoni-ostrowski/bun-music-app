@@ -16,5 +16,10 @@ function RouteComponent() {
   if (isLoading) {
     return <div> LOADING</div>
   }
-  return <div>{data && <TrackTable tracks={data} />}</div>
+  return (
+    <div>
+      <h1>Hello page</h1>
+      {data && <TrackTable tracks={data} />}
+    </div>
+  )
 }
