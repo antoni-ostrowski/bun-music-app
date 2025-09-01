@@ -1,31 +1,33 @@
 import type { ReactNode } from 'react'
 export const pageTitleIconSize = 'h-8 w-8'
 export default function PageTitleWrapper({
-  title,
+  title = '',
   icon,
-  description,
+  description = '',
   children,
 }: {
-  title: string
-  icon: ReactNode
-  description: string
+  title?: string
+  icon?: ReactNode
+  description?: string
   children: ReactNode
 }) {
   return (
-    <div className="bg-background min-h-screen">
-      <div className="container mx-auto max-w-4xl px-4 py-8">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="">{icon}</div>
-          {/*<Settings className="text-primary h-8 w-8" />*/}
-          <div>
-            <h1 className="text-foreground text-3xl font-bold">{title}</h1>
-            <p className="text-muted-foreground">
-              {description}
-              {/*Manage your music library and preferences*/}
-            </p>
+    <div className="flex min-h-screen flex-col">
+      <div className="container flex max-w-4xl flex-1 flex-col gap-4 p-4">
+        {(title || description || icon) && (
+          <div className="flex items-center gap-3">
+            <div className="">{icon}</div>
+            <div>
+              {title && (
+                <h1 className="text-foreground text-3xl font-bold">{title}</h1>
+              )}
+              {description && (
+                <p className="text-muted-foreground">{description}</p>
+              )}
+            </div>
           </div>
-        </div>
-        {children}
+        )}
+        <div className="flex flex-1">{children}</div>
       </div>
     </div>
   )

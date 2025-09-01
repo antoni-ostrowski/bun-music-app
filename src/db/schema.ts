@@ -17,6 +17,9 @@ export const tracks = sqliteTable('tracks', {
     .primaryKey()
     .notNull()
     .$default(() => crypto.randomUUID()),
+  created_at: integer('created_at')
+    .notNull()
+    .$defaultFn(() => getCurrentUnixTimestamp()),
   path: text('path').notNull().unique(),
   source_url: text('source_url').notNull(),
   title: text('title').notNull(),
@@ -25,11 +28,19 @@ export const tracks = sqliteTable('tracks', {
   genre: text('genre'),
   year: integer('year'),
   duration_in_ms: integer('duration_in_ms'),
+  queue_id: text('queue_id'),
+})
+export const t = tracks.$inferSelect
+export type TrackType = typeof t
+
+export const playlists = sqliteTable('playlists', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$default(() => crypto.randomUUID()),
   created_at: integer('created_at')
     .notNull()
     .$defaultFn(() => getCurrentUnixTimestamp()),
+  name: text('name').notNull(),
+  cover_path: text('cover_path'),
 })
-export const t = tracks.$inferSelect
-export type TrackType = typeof t & {
-  queue_id: string | null
-}
