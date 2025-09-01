@@ -1,4 +1,4 @@
-import { useTRPC } from '@/app/trpc/context'
+import { trpc } from '@/app/router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +16,6 @@ import { useState } from 'react'
 
 export default function MusicSources() {
   const qc = useQueryClient()
-  const trpc = useTRPC()
   const { mutate: addSourceFunc } = useMutation({
     ...trpc.user.addSource.mutationOptions(),
     onSuccess: async () => {
@@ -99,8 +98,6 @@ export default function MusicSources() {
   )
 }
 function Source({ source }: { source: string }) {
-  const trpc = useTRPC()
-
   const { mutateAsync } = useMutation({
     ...trpc.user.deleteSource.mutationOptions(),
     onSuccess: async () => {

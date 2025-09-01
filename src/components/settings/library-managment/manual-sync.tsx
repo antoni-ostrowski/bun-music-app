@@ -1,11 +1,10 @@
-import { useTRPC } from '@/app/trpc/context'
+import { trpc } from '@/app/router'
 import { Button } from '@/components/ui/button'
 import { useMutation } from '@tanstack/react-query'
 import { RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 
 export default function ManualTracksSync() {
-  const trpc = useTRPC()
   const { mutateAsync: manualSync } = useMutation(
     trpc.track.syncTracks.mutationOptions()
   )
