@@ -1,15 +1,26 @@
 import { db } from '@/db'
 import { preferences, tracks } from '@/db/schema'
-import { tryCatch } from '@/lib/utils'
+import { getCurrentUnixTimestamp, tryCatch } from '@/lib/utils'
 import { eq } from 'drizzle-orm'
 import { promises as fs } from 'fs'
 import { parseFile, type IAudioMetadata } from 'music-metadata'
 import { extname, join } from 'path'
+import z from 'zod'
 import { t } from './router'
 export const trackRouter = t.router({
-  hello: t.procedure.query(() => {
-    return { test: 'Hello, world!' }
-  }),
+  starTrack: t.procedure
+    .input(z.object({ trackId: z.string() }))
+    .mutation(async ({ input: { trackId } }) => {
+      const current = await db.query.tracks.findFirst({
+        where: (tracks, { eq }) => eq(tracks.id, trackId),
+      })
+      console.log('starttr')
+      if (!current) throw new Error('Track not found')
+      await db
+        .update(tracks)
+        .set({ starred: current.starred ? null : getCurrentUnixTimestamp() })
+        .where(eq(tracks.id, trackId))
+    }),
   listAllTracks: t.procedure.query(async () => {
     return db.query.tracks.findMany()
   }),

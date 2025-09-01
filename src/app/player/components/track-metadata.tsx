@@ -1,12 +1,24 @@
+import { trpc } from '@/app/router'
 import type { TrackType } from '@/db/schema'
-import { makeArtworkUrl } from '@/lib/utils'
+import { getCurrentUnixTimestamp, makeArtworkUrl } from '@/lib/utils'
+import { useMutation } from '@tanstack/react-query'
 import { Dot, MoreHorizontal, Star } from 'lucide-react'
+import { updatePlayerStore } from '../store'
 
 export default function TrackMetadata({
   currentTrack,
 }: {
   currentTrack: TrackType
 }) {
+  const { mutate } = useMutation({
+    ...trpc.track.starTrack.mutationOptions(),
+    onSuccess: () => {
+      updatePlayerStore('currentTrack', {
+        ...currentTrack,
+        starred: currentTrack.starred ? null : getCurrentUnixTimestamp(),
+      })
+    },
+  })
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-2">
@@ -27,7 +39,13 @@ export default function TrackMetadata({
             </div>
           </div>
           <div className="flex flex-row gap-3">
-            <Star size={22} className="cursor-pointer" />
+            <Star
+              onClick={() => mutate({ trackId: currentTrack.id })}
+              size={22}
+              className="cursor-pointer"
+              fill={currentTrack.starred ? 'yellow' : ''}
+              color={currentTrack.starred ? 'yellow' : 'white'}
+            />
             <MoreHorizontal size={22} className="cursor-pointer" />
           </div>
         </div>

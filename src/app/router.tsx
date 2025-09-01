@@ -1,4 +1,8 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  MutationCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { createTRPCClient, httpBatchLink } from '@trpc/client'
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
@@ -7,7 +11,13 @@ import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query'
 import type { AppRouter } from '@/trpc'
 import { routeTree } from './routeTree.gen'
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries()
+    },
+  }),
+})
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   client: createTRPCClient({

@@ -28,6 +28,7 @@ export const tracks = sqliteTable('tracks', {
   genre: text('genre'),
   year: integer('year'),
   duration_in_ms: integer('duration_in_ms'),
+  starred: integer('starred'),
   queue_id: text('queue_id'),
 })
 export const t = tracks.$inferSelect
