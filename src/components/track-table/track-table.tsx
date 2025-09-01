@@ -1,4 +1,4 @@
-import type { Track } from '@/db/schema'
+import type { TrackType } from '@/db/schema'
 import { makeArtworkUrl } from '@/lib/utils'
 import {
   createColumnHelper,
@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '../ui/table'
 import { Btns } from './btns'
-const columnHelper = createColumnHelper<Track>()
+const columnHelper = createColumnHelper<TrackType>()
 const columns = [
   columnHelper.display({
     id: 'artwork',
@@ -28,13 +28,22 @@ const columns = [
       />
     ),
   }),
-  columnHelper.accessor('artist', {
-    header: 'Artist',
-    cell: (info) => <span>{info.getValue()}</span>,
-  }),
+  // columnHelper.accessor('artist', {
+  //   header: 'Artist',
+  //   cell: (info) => <span>{info.getValue()}</span>,
+  // }),
   columnHelper.accessor('title', {
     header: 'Title',
-    cell: (info) => <span>{info.getValue()}</span>,
+    cell: ({
+      row: {
+        original: { title, artist },
+      },
+    }) => (
+      <div className="flex flex-col">
+        <p>{title}</p>
+        <p className="text-muted-foreground">{artist}</p>
+      </div>
+    ),
   }),
   columnHelper.accessor('album', {
     header: 'Album',
@@ -46,7 +55,7 @@ const columns = [
     cell: (props) => <Btns track={props.row.original} />,
   }),
 ]
-export default function TrackTable({ tracks }: { tracks: Track[] }) {
+export default function TrackTable({ tracks }: { tracks: TrackType[] }) {
   const table = useReactTable({
     columns,
     data: tracks,
@@ -59,8 +68,8 @@ export default function TrackTable({ tracks }: { tracks: Track[] }) {
   const virtualizer = useVirtualizer({
     count: table.getRowModel().rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 60,
-    overscan: 40,
+    estimateSize: () => 40,
+    overscan: 20,
   })
 
   return (
