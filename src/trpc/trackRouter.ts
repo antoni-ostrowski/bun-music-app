@@ -44,7 +44,8 @@ export async function syncTracks() {
     console.log('[SYNC] Inserting found tracks into db')
     await processTrackInsertion(audioFiles)
   }
-  await scanDbForDeletedTracks()
+  console.log('[SYNC] Starting scanning for deleted files')
+  await scanDbForDeletedTracks(sourceUrls)
   return { ok: true }
 }
 async function getUsersPreferences() {
@@ -178,13 +179,28 @@ async function getFileMetadata(filePath: string) {
 
   return metadata
 }
-async function scanDbForDeletedTracks() {
+async function scanDbForDeletedTracks(sourceUrls: string[]) {
+  // console.log('urls in deleting func - ', sourceUrls)
   const dbTracks = await db.query.tracks.findMany()
   for (const track of dbTracks) {
+    // console.log('checking with ', track.source_url)
+    // console.log('checking with ', sourceUrls)
+
+    // console.log('[SYNC] Checking track - ', track.title)
     const { path, id } = track
+    // console.log('[SYNC] checking path - ', path)
     const exists = await fs.exists(path)
-    if (!exists) {
+    // console.log(
+    //   'does track exists in urls - ',
+    //   sourceUrls.some((url) => track.source_url.startsWith(url))
+    // )
+    // console.log('[SYNC] Track exists:', exists)
+    if (
+      !exists ||
+      !sourceUrls.some((url) => track.source_url.startsWith(url))
+    ) {
       await db.delete(tracks).where(eq(tracks.id, id))
+      // console.log('[SYNC] Track deleted successfully')
     }
   }
 }

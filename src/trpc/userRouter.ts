@@ -40,4 +40,18 @@ export const userRouter = t.router({
       }
       return 'hello'
     }),
+
+  deleteSource: t.procedure
+    .input(z.object({ source: z.string() }))
+    .mutation(async ({ input: { source } }) => {
+      const userPreferences = await db.query.preferences.findFirst()
+      if (!userPreferences?.preferences) throw new Error('No preferences found')
+      const newPreferences: Preferences = {
+        ...userPreferences.preferences,
+        source_urls: userPreferences.preferences.source_urls.filter(
+          (url) => url !== source
+        ),
+      }
+      await db.update(preferences).set({ preferences: newPreferences })
+    }),
 })

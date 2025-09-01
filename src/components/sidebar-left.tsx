@@ -10,7 +10,7 @@ const iconSize = 40
 
 export default function SidebarLeft() {
   return (
-    <Sidebar className="sticky top-0 h-svh border lg:flex" collapsible="none">
+    <Sidebar className="sticky top-0 h-svh lg:flex" collapsible="none">
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuButton>

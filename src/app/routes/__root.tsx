@@ -1,9 +1,9 @@
 import SidebarLeft from '@/components/sidebar-left'
 import SidebarRight from '@/components/sidebar-right'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
 export const Route = createRootRoute({
   component: () => (
     <SidebarProvider>
@@ -14,6 +14,7 @@ export const Route = createRootRoute({
       </SidebarInset>
       <SidebarRight />
       <TanStackRouterDevtools position="bottom-right" />
+      <ReactQueryDevtools initialIsOpen={false} />
     </SidebarProvider>
   ),
 })
