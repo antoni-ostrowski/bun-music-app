@@ -64,8 +64,8 @@ export default function Player() {
             ref={audioRef}
             src={makeMusicUrl(currentTrack.path)}
             autoPlay
-            onPlay={handlePlay}
-            onPause={handlePause}
+            // onPlay={handlePlay}
+            // onPause={handlePause}
             onEnded={handleEnded}
             onLoadedMetadata={onLoadedMetadata}
             onTimeUpdate={handleTimeUpdate}

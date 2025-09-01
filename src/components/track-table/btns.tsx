@@ -1,4 +1,4 @@
-import { playerStore } from '@/app/player/store'
+import { playerStore, updatePlayerStore } from '@/app/player/store'
 import type { TrackType } from '@/db/schema'
 import { useStore } from '@tanstack/react-store'
 import { ListEnd, ListStart, Play } from 'lucide-react'
@@ -12,10 +12,8 @@ export function Btns({ track }: { track: TrackType }) {
       <Button
         variant={'outline'}
         onClick={() => {
-          playerStore.setState({
-            ...playerStore.state,
-            currentTrack: createQueueTrack(track),
-          })
+          updatePlayerStore('currentTrack', createQueueTrack(track))
+          updatePlayerStore('isPlaying', true)
         }}
       >
         <Play />
@@ -23,10 +21,10 @@ export function Btns({ track }: { track: TrackType }) {
       <Button
         variant={'outline'}
         onClick={() => {
-          playerStore.setState({
-            ...playerStore.state,
-            queue: [...playerStore.state.queue, createQueueTrack(track)],
-          })
+          updatePlayerStore('queue', [
+            ...playerStore.state.queue,
+            createQueueTrack(track),
+          ])
         }}
       >
         <ListEnd />
@@ -34,10 +32,10 @@ export function Btns({ track }: { track: TrackType }) {
       <Button
         variant={'outline'}
         onClick={() => {
-          playerStore.setState({
-            ...playerStore.state,
-            queue: [createQueueTrack(track), ...playerStore.state.queue],
-          })
+          updatePlayerStore('queue', [
+            createQueueTrack(track),
+            ...playerStore.state.queue,
+          ])
         }}
       >
         <ListStart />
