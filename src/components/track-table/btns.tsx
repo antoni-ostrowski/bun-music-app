@@ -1,17 +1,20 @@
 import { playerStore } from '@/app/player/store'
-import type { Track } from '@/db/schema'
+import type { TrackType } from '@/db/schema'
+import { useStore } from '@tanstack/react-store'
 import { ListEnd, ListStart, Play } from 'lucide-react'
 import { Button } from '../ui/button'
 
-export function Btns({ track }: { track: Track }) {
+export function Btns({ track }: { track: TrackType }) {
+  const { isPlaying, currentTrack } = useStore(playerStore)
   return (
     <div className="flex flex-row gap-2">
+      {currentTrack?.id === track.id && <>{isPlaying ? 'Playing' : 'Paused'}</>}
       <Button
         variant={'outline'}
         onClick={() => {
           playerStore.setState({
             ...playerStore.state,
-            currentTrack: track,
+            currentTrack: createQueueTrack(track),
           })
         }}
       >
@@ -22,7 +25,7 @@ export function Btns({ track }: { track: Track }) {
         onClick={() => {
           playerStore.setState({
             ...playerStore.state,
-            queue: [...playerStore.state.queue, track],
+            queue: [...playerStore.state.queue, createQueueTrack(track)],
           })
         }}
       >
@@ -33,7 +36,7 @@ export function Btns({ track }: { track: Track }) {
         onClick={() => {
           playerStore.setState({
             ...playerStore.state,
-            queue: [track, ...playerStore.state.queue],
+            queue: [createQueueTrack(track), ...playerStore.state.queue],
           })
         }}
       >
@@ -44,4 +47,10 @@ export function Btns({ track }: { track: Track }) {
       </Button>*/}
     </div>
   )
+}
+function createQueueTrack(track: TrackType) {
+  return {
+    ...track,
+    queue_id: crypto.randomUUID(),
+  }
 }

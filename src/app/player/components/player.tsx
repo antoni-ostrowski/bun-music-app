@@ -1,9 +1,8 @@
-import Track from '@/components/track/track'
 import { Card } from '@/components/ui/card'
-import type { TrackType } from '@/db/schema'
 import { makeMusicUrl } from '@/lib/utils'
+import { useStore } from '@tanstack/react-store'
 import { useRef, useState, type RefObject } from 'react'
-import usePlayerStore from '../usePlayerStore'
+import { playerStore, updatePlayerStore } from '../store'
 import PlaybackControls from './playback-controls'
 import ProgressBar from './progress-bar'
 import TrackMetadata from './track-metadata'
@@ -13,24 +12,11 @@ export type AudioRefType = RefObject<HTMLAudioElement | null>
 export type ProgressBarRefType = RefObject<HTMLInputElement | null>
 
 export default function Player() {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTrack, setCurrentTrack] = useState<TrackType | undefined>(
-    undefined
-  )
-  const [queue, setQueue] = useState<TrackType[]>([])
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressBarRef = useRef<HTMLInputElement>(null)
   const [currentTime, setCurrentTime] = useState(0)
 
-  usePlayerStore({
-    audioRef,
-    setCurrentTrack: (track: TrackType) => {
-      setCurrentTrack(track)
-    },
-    setQueue: (queue: TrackType[]) => {
-      setQueue(queue)
-    },
-  })
+  const { queue, currentTrack, isPlaying } = useStore(playerStore)
 
   function onLoadedMetadata() {
     const seconds = audioRef.current?.duration
@@ -50,12 +36,12 @@ export default function Player() {
   function handlePlay() {
     console.log('Audio playback started.')
     void audioRef.current?.play()
-    setIsPlaying(true)
+    updatePlayerStore('isPlaying', true)
   }
   function handlePause() {
     console.log('Audio playback paused.')
     audioRef.current?.pause()
-    setIsPlaying(false)
+    updatePlayerStore('isPlaying', false)
   }
   function handleEnded() {
     console.log('Audio ended. Time to play the next song!')
@@ -63,13 +49,10 @@ export default function Player() {
   }
   function handleSkipForward() {
     console.log('Skipping forward')
-    if (audioRef.current && queue[0]?.path) {
-      const nextTrackFromQueue = queue[0]
-      setCurrentTrack(nextTrackFromQueue)
-      setQueue((prevQueue) => {
-        const nextQueue = prevQueue.shift()
-        return nextQueue ? [nextQueue, ...prevQueue] : []
-      })
+    const nextTrackFromQueue = queue[0]
+    if (audioRef.current && nextTrackFromQueue?.path) {
+      updatePlayerStore('currentTrack', nextTrackFromQueue)
+      updatePlayerStore('queue', queue.slice(1, queue.length))
     }
   }
 
@@ -111,7 +94,12 @@ export default function Player() {
           {/*here make a MINI table for track in queue, because drag and drop will be nice here too*/}
           <div>
             {queue.map((queueTrack) => {
-              return <Track track={queueTrack} key={crypto.randomUUID()} />
+              return (
+                <div key={`queue-track-${queueTrack.queue_id}`}>
+                  <p>{queueTrack.title}</p>
+                  <p>{queueTrack.queue_id}</p>
+                </div>
+              )
             })}
           </div>
         </Card>

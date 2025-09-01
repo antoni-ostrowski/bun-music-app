@@ -24,10 +24,12 @@ export const tracks = sqliteTable('tracks', {
   album: text('album'),
   genre: text('genre'),
   year: integer('year'),
-  durationInMs: integer('durationInMs'),
+  duration_in_ms: integer('duration_in_ms'),
   created_at: integer('created_at')
     .notNull()
     .$defaultFn(() => getCurrentUnixTimestamp()),
 })
 export const t = tracks.$inferSelect
-export type TrackType = typeof t
+export type TrackType = typeof t & {
+  queue_id: string | null
+}
