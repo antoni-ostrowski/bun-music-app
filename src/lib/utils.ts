@@ -28,6 +28,9 @@ export async function tryCatch<T, E = Error>(
 export function makeArtworkUrl(filePath: string) {
   return `http://localhost:3000/artwork/${encodeURIComponent(filePath)}`
 }
+export function makeImageUrl(filePath: string) {
+  return `http://localhost:3000/image/${encodeURIComponent(filePath)}`
+}
 export function makeMusicUrl(filePath: string) {
   return `http://localhost:3000/music/${encodeURIComponent(filePath)}`
 }

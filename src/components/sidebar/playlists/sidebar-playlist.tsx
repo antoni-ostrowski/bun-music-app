@@ -1,0 +1,74 @@
+import { trpc } from '@/app/router'
+import { Button } from '@/components/ui/button'
+import { SidebarMenuButton, SidebarMenuSub } from '@/components/ui/sidebar'
+import { makeImageUrl } from '@/lib/utils'
+import { useQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { ChevronDown, ListVideo } from 'lucide-react'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '../../ui/collapsible'
+import { sidebarIconSize, SidebarItemText } from '../sidebar-left'
+import { NewPlaylist } from './new-playlist'
+
+export default function SidebarPlaylists() {
+  const { data, isLoading, isError } = useQuery(
+    trpc.playlist.listPlaylists.queryOptions()
+  )
+  console.log('data - ', data)
+  if (isError) {
+    console.log('[PLAYLIST] Error gettings playlists')
+    return null
+  }
+  if (isLoading) {
+    return null
+  }
+  if (!data) {
+    return null
+  }
+  return (
+    <>
+      <Collapsible defaultOpen className="group/collapsible">
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton className="cursor-pointer">
+            <ListVideo size={sidebarIconSize} />
+            <SidebarItemText text="Playlists" />
+            <ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub className="gap-1">
+            <NewPlaylist />
+            {data.map((playlist) => {
+              return (
+                <Link
+                  to={`/playlist/$playlistId`}
+                  params={{ playlistId: playlist.id }}
+                >
+                  <Button
+                    key={`sidebar-playlist-${playlist.id}`}
+                    className="flex w-full items-center justify-start"
+                    variant={'ghost'}
+                    asChild
+                  >
+                    <div>
+                      {playlist.cover_path && (
+                        <img
+                          className="w-6"
+                          src={makeImageUrl(playlist.cover_path)}
+                        />
+                      )}
+                      <p>{playlist.name}</p>
+                    </div>
+                  </Button>
+                </Link>
+              )
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </Collapsible>
+    </>
+  )
+}

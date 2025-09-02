@@ -72,6 +72,19 @@ const server = serve({
         },
       })
     },
+    '/image/:filePath': (req) => {
+      const filePath = decodeURIComponent(req.params.filePath)
+
+      const file = Bun.file(filePath)
+      if (!file) {
+        console.log(
+          '[---ARTWORK---] No track artwork found, returning placeholder'
+        )
+        const fallbackFile = Bun.file('src/placeholder.webp')
+        return new Response(fallbackFile)
+      }
+      return new Response(file)
+    },
   },
   development: process.env.NODE_ENV !== 'production' && {
     // Enable browser hot reloading in development

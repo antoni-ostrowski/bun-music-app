@@ -22,18 +22,12 @@ const columns = [
   columnHelper.display({
     id: 'artwork',
     cell: (props) => (
-      <img
-        className="w-10 min-w-10"
-        src={makeArtworkUrl(props.row.original.path)}
-      />
+      <img className="w-14" src={makeArtworkUrl(props.row.original.path)} />
     ),
   }),
-  // columnHelper.accessor('artist', {
-  //   header: 'Artist',
-  //   cell: (info) => <span>{info.getValue()}</span>,
-  // }),
+
   columnHelper.accessor('title', {
-    header: 'Title',
+    header: '',
     cell: ({
       row: {
         original: { title, artist },
@@ -46,7 +40,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('album', {
-    header: 'Album',
+    header: '',
     cell: (info) => <span>{info.getValue()}</span>,
   }),
 

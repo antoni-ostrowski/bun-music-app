@@ -12,10 +12,10 @@ export function Btns({ track }: { track: TrackType }) {
     ...trpc.track.starTrack.mutationOptions(),
   })
   return (
-    <div className="flex flex-row gap-2">
+    <div className="flex flex-row items-center justify-center gap-2">
       {currentTrack?.id === track.id && <>{isPlaying ? 'Playing' : 'Paused'}</>}
       <Button
-        variant={'outline'}
+        variant={'ghost'}
         onClick={() => {
           updatePlayerStore('currentTrack', createQueueTrack(track))
           updatePlayerStore('isPlaying', true)
@@ -24,7 +24,7 @@ export function Btns({ track }: { track: TrackType }) {
         <Play />
       </Button>
       <Button
-        variant={'outline'}
+        variant={'ghost'}
         onClick={() => {
           updatePlayerStore('queue', [
             ...playerStore.state.queue,
@@ -35,7 +35,7 @@ export function Btns({ track }: { track: TrackType }) {
         <ListEnd />
       </Button>
       <Button
-        variant={'outline'}
+        variant={'ghost'}
         onClick={() => {
           updatePlayerStore('queue', [
             createQueueTrack(track),
@@ -45,12 +45,13 @@ export function Btns({ track }: { track: TrackType }) {
       >
         <ListStart />
       </Button>
-      <Star
-        className="cursor-pointer"
-        onClick={() => mutate({ trackId: track.id })}
-        fill={track.starred ? 'yellow' : ''}
-        color={track.starred ? 'yellow' : 'white'}
-      />
+      <Button variant={'ghost'} onClick={() => mutate({ trackId: track.id })}>
+        <Star
+          className="cursor-pointer"
+          fill={track.starred ? 'yellow' : ''}
+          color={track.starred ? 'yellow' : 'white'}
+        />
+      </Button>
     </div>
   )
 }

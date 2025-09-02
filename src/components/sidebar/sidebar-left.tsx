@@ -6,7 +6,8 @@ import {
 } from '@/components/ui/sidebar'
 import { Link } from '@tanstack/react-router'
 import { Minimize, Settings } from 'lucide-react'
-const iconSize = 40
+import SidebarPlaylists from './playlists/sidebar-playlist'
+export const sidebarIconSize = 40
 
 export default function SidebarLeft() {
   return (
@@ -14,22 +15,23 @@ export default function SidebarLeft() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuButton>
-            <Minimize size={iconSize} />
+            <Minimize size={sidebarIconSize} />
             <Link to="/">
               <SidebarItemText text="Start" />
             </Link>
           </SidebarMenuButton>
           <SidebarMenuButton>
-            <Settings size={iconSize} />
+            <Settings size={sidebarIconSize} />
             <Link to="/settings">
               <SidebarItemText text="Settings" />
             </Link>
           </SidebarMenuButton>
+          <SidebarPlaylists />
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>
   )
 }
-function SidebarItemText({ text }: { text: string }) {
+export function SidebarItemText({ text }: { text: string }) {
   return <h1 className="text-md font-semibold">{text}</h1>
 }
