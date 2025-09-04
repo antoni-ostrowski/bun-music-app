@@ -2,7 +2,7 @@ import { db } from '@/db'
 import { playlists } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import z from 'zod'
-import { t } from './router'
+import { t } from '../router'
 
 export const playlistRouter = t.router({
   listPlaylists: t.procedure.query(async () => {
@@ -11,8 +11,10 @@ export const playlistRouter = t.router({
   createPlaylist: t.procedure
     .input(z.object({ name: z.string(), cover_path: z.string() }))
     .mutation(async ({ input: { name, cover_path } }) => {
-      await db.insert(playlists).values({ name, cover_path })
-      return ''
+      await db.insert(playlists).values({
+        name,
+        cover_path: cover_path.length === 0 ? null : cover_path,
+      })
     }),
   editPlaylist: t.procedure
     .input(

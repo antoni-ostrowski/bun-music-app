@@ -30,12 +30,10 @@ function RouteComponent() {
     <PageTitleWrapper>
       <div className="flex flex-col gap-10">
         <div className="flex flex-row items-center justify-start gap-8">
-          {data.playlist.cover_path && (
-            <img
-              className="aspect-square w-50 object-fill"
-              src={makeImageUrl(data.playlist.cover_path)}
-            />
-          )}
+          <img
+            className="aspect-square w-50 object-fill"
+            src={makeImageUrl(data.playlist.cover_path ?? '/f/f/f/')}
+          />
           <div className="flex flex-col items-start justify-start gap-2">
             <h1 className="text-3xl font-bold">{data.playlist.name}</h1>
             <div className="flex flex-row gap-2">

@@ -11,6 +11,7 @@ import {
   CollapsibleTrigger,
 } from '../../ui/collapsible'
 import { sidebarIconSize, SidebarItemText } from '../sidebar-left'
+import AllPlaylists from './all-playlists'
 import { NewPlaylist } from './new-playlist'
 
 export default function SidebarPlaylists() {
@@ -40,15 +41,16 @@ export default function SidebarPlaylists() {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <SidebarMenuSub className="gap-1">
+            <AllPlaylists />
             <NewPlaylist />
             {data.map((playlist) => {
               return (
                 <Link
                   to={`/playlist/$playlistId`}
                   params={{ playlistId: playlist.id }}
+                  key={`sidebar-playlist-${playlist.id}`}
                 >
                   <Button
-                    key={`sidebar-playlist-${playlist.id}`}
                     className="flex w-full items-center justify-start"
                     variant={'ghost'}
                     asChild

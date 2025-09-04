@@ -13,6 +13,7 @@ import { useForm } from '@tanstack/react-form'
 import { useMutation } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { sidebarIconSize } from '../sidebar-left'
 
 export function NewPlaylist() {
@@ -22,12 +23,17 @@ export function NewPlaylist() {
     onSuccess: () => {
       setIsOpen(false)
     },
+    onError: (error) => {
+      console.log('---NEW PLAYLIST--- Erorr creating playlist - ', error)
+      toast.error('Failed to create playlist', { description: error.message })
+    },
   })
   const form = useForm({
     defaultValues: {
       name: '',
       cover_path: '',
     },
+
     onSubmit: ({ value }) => {
       // console.log('form values - ', value)
       createNewPlaylist(value)
@@ -51,18 +57,20 @@ export function NewPlaylist() {
             <div className="flex flex-col gap-4">
               <form.Field
                 name="name"
-                children={(field) => (
-                  <div className="flex flex-col gap-4">
-                    <Label htmlFor="playlist_name">Playlist name</Label>
-                    <Input
-                      id="playlist_name"
-                      placeholder="Playlist name"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                  </div>
-                )}
+                children={(field) => {
+                  return (
+                    <div className="flex flex-col gap-4">
+                      <Label htmlFor="playlist_name">Playlist name</Label>
+                      <Input
+                        id="playlist_name"
+                        placeholder="Playlist name"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                    </div>
+                  )
+                }}
               />
               <form.Field
                 name="cover_path"
@@ -76,6 +84,9 @@ export function NewPlaylist() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
+                    {!field.state.meta.isValid && (
+                      <em role="alert">{field.state.meta.errors.join(', ')}</em>
+                    )}
                   </div>
                 )}
               />

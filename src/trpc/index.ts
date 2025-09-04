@@ -1,7 +1,7 @@
-import { playlistRouter } from './playlistRouter'
 import { router } from './router'
-import { trackRouter } from './trackRouter'
-import { userRouter } from './userRouter'
+import { playlistRouter } from './routers/playlistRouter'
+import { trackRouter } from './routers/trackRouter'
+import { userRouter } from './routers/userRouter'
 
 export const appRouter = router({
   track: trackRouter,

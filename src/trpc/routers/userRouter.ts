@@ -3,7 +3,7 @@ import { preferences, type Preferences } from '@/db/schema'
 import { tryCatch } from '@/lib/utils'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
-import { t } from './router'
+import { t } from '../router'
 export const userRouter = t.router({
   getPreferences: t.procedure.query(async () => {
     const preferences = await db.query.preferences.findFirst()

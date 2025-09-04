@@ -1,6 +1,7 @@
 import SidebarLeft from '@/components/sidebar/sidebar-left'
 import SidebarRight from '@/components/sidebar/sidebar-right'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { Toaster } from '@/components/ui/sonner'
 import type { AppRouter } from '@/trpc'
 import type { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -36,6 +37,7 @@ function RootComponent() {
 
               <SidebarInset>
                 <Outlet />
+                <Toaster />
               </SidebarInset>
               <SidebarRight />
             </SidebarProvider>

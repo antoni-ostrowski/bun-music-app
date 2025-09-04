@@ -72,14 +72,12 @@ const server = serve({
         },
       })
     },
-    '/image/:filePath': (req) => {
+    '/image/:filePath': async (req) => {
       const filePath = decodeURIComponent(req.params.filePath)
-
       const file = Bun.file(filePath)
-      if (!file) {
-        console.log(
-          '[---ARTWORK---] No track artwork found, returning placeholder'
-        )
+      const doesExists = await file.exists()
+      if (!file || !doesExists) {
+        console.error('[---IMAGE---] Error loading file')
         const fallbackFile = Bun.file('src/placeholder.webp')
         return new Response(fallbackFile)
       }

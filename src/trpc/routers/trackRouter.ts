@@ -6,7 +6,7 @@ import { promises as fs } from 'fs'
 import { parseFile, type IAudioMetadata } from 'music-metadata'
 import { extname, join } from 'path'
 import z from 'zod'
-import { t } from './router'
+import { t } from '../router'
 export const trackRouter = t.router({
   starTrack: t.procedure
     .input(z.object({ trackId: z.string() }))

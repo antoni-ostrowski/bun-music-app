@@ -24,6 +24,14 @@ export async function tryCatch<T, E = Error>(
     return [null, error as E]
   }
 }
+export function tryCatchSync<T, E = Error>(func: () => T): Result<T, E> {
+  try {
+    const data = func()
+    return [data, null]
+  } catch (error) {
+    return [null, error as E]
+  }
+}
 
 export function makeArtworkUrl(filePath: string) {
   return `http://localhost:3000/artwork/${encodeURIComponent(filePath)}`
