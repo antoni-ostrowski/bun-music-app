@@ -21,6 +21,11 @@ export const trackRouter = t.router({
         .set({ starred: current.starred ? null : getCurrentUnixTimestamp() })
         .where(eq(tracks.id, trackId))
     }),
+  getFavTracks: t.procedure.query(async () => {
+    return await db.query.tracks.findMany({
+      where: (tracks, { isNotNull }) => isNotNull(tracks.starred),
+    })
+  }),
   listAllTracks: t.procedure.query(async () => {
     return db.query.tracks.findMany()
   }),

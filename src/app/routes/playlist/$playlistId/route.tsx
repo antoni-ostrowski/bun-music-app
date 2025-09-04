@@ -38,9 +38,10 @@ function RouteComponent() {
           )}
           <div className="flex flex-col items-start justify-start gap-2">
             <h1 className="text-3xl font-bold">{data.playlist.name}</h1>
-
-            <EditPlaylist currentPlaylistState={data.playlist} />
-            <DeletePlaylist currentPlaylistState={data.playlist} />
+            <div className="flex flex-row gap-2">
+              <EditPlaylist currentPlaylistState={data.playlist} />
+              <DeletePlaylist currentPlaylistState={data.playlist} />
+            </div>
           </div>
         </div>
         {data && <TrackTable tracks={data.tracks} />}

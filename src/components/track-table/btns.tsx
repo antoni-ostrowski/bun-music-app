@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useStore } from '@tanstack/react-store'
 import { ListEnd, ListStart, Play, Star } from 'lucide-react'
 import { Button } from '../ui/button'
+import MoreActions from './more-actions'
 
 export function Btns({ track }: { track: TrackType }) {
   const { isPlaying, currentTrack } = useStore(playerStore)
@@ -12,7 +13,7 @@ export function Btns({ track }: { track: TrackType }) {
     ...trpc.track.starTrack.mutationOptions(),
   })
   return (
-    <div className="flex flex-row items-center justify-center gap-2">
+    <div className="flex flex-row items-center justify-center gap-2 pr-4">
       {currentTrack?.id === track.id && <>{isPlaying ? 'Playing' : 'Paused'}</>}
       <Button
         variant={'ghost'}
@@ -22,6 +23,13 @@ export function Btns({ track }: { track: TrackType }) {
         }}
       >
         <Play />
+      </Button>
+      <Button variant={'ghost'} onClick={() => mutate({ trackId: track.id })}>
+        <Star
+          className="cursor-pointer"
+          fill={track.starred ? 'yellow' : ''}
+          color={track.starred ? 'yellow' : 'white'}
+        />
       </Button>
       <Button
         variant={'ghost'}
@@ -45,13 +53,8 @@ export function Btns({ track }: { track: TrackType }) {
       >
         <ListStart />
       </Button>
-      <Button variant={'ghost'} onClick={() => mutate({ trackId: track.id })}>
-        <Star
-          className="cursor-pointer"
-          fill={track.starred ? 'yellow' : ''}
-          color={track.starred ? 'yellow' : 'white'}
-        />
-      </Button>
+
+      <MoreActions />
     </div>
   )
 }
