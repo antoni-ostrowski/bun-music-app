@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '../ui/table'
-import { Btns } from './btns'
+import { Btns, handlePlayNewTrack } from './btns'
 const columnHelper = createColumnHelper<TrackType>()
 const columns = [
   columnHelper.display({
@@ -96,6 +96,9 @@ export default function TrackTable({ tracks }: { tracks: TrackType[] }) {
                   if (!row) return null
                   return (
                     <TableRow
+                      onDoubleClick={() => {
+                        handlePlayNewTrack(row.original)
+                      }}
                       style={{
                         height: `${virtualRow.size}px`,
                         transform: `translateY(${

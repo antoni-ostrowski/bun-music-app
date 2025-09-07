@@ -18,8 +18,7 @@ export function Btns({ track }: { track: TrackType }) {
       <Button
         variant={'ghost'}
         onClick={() => {
-          updatePlayerStore('currentTrack', createQueueTrack(track))
-          updatePlayerStore('isPlaying', true)
+          handlePlayNewTrack(track)
         }}
       >
         <Play />
@@ -57,6 +56,10 @@ export function Btns({ track }: { track: TrackType }) {
       <MoreActions />
     </div>
   )
+}
+export function handlePlayNewTrack(track: TrackType) {
+  updatePlayerStore('currentTrack', createQueueTrack(track))
+  updatePlayerStore('isPlaying', true)
 }
 function createQueueTrack(track: TrackType) {
   return {
