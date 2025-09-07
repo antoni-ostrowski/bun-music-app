@@ -6,6 +6,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Link } from '@tanstack/react-router'
 import { Minimize, Settings } from 'lucide-react'
+import SidebarArtists from './artists/sidebar-artists'
 import FavTracks from './fav-tracks/fav-tracks'
 import SidebarPlaylists from './playlists/sidebar-playlist'
 export const sidebarIconSize = 40
@@ -29,6 +30,7 @@ export default function SidebarLeft() {
           </SidebarMenuButton>
           <FavTracks />
           <SidebarPlaylists />
+          <SidebarArtists />
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>

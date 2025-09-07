@@ -8,6 +8,11 @@ import { extname, join } from 'path'
 import z from 'zod'
 import { t } from '../router'
 export const trackRouter = t.router({
+  getTracksFromArtist: t.procedure
+    .input(z.object({ artist: z.string() }))
+    .query(async ({ input: { artist } }) => {
+      return getTracksFromArtist(artist)
+    }),
   starTrack: t.procedure
     .input(z.object({ trackId: z.string() }))
     .mutation(async ({ input: { trackId } }) => {
@@ -191,7 +196,8 @@ async function processTrackInsertion(audioFiles: AudioFile[]) {
 }
 async function getFileMetadata(filePath: string) {
   const metadata = await parseFile(filePath)
-  // console.log(`metadata for ${filePath}`, metadata)
+  console.log(`metadata for ${filePath}`)
+  console.dir(metadata, { depth: null })
 
   return metadata
 }
@@ -219,4 +225,9 @@ async function scanDbForDeletedTracks(sourceUrls: string[]) {
       // console.log('[SYNC] Track deleted successfully')
     }
   }
+}
+export async function getTracksFromArtist(artist: string) {
+  return await db.query.tracks.findMany({
+    where: (tracks, { like }) => like(tracks.artist, `%${artist}%`),
+  })
 }

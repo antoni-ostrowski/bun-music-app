@@ -14,6 +14,8 @@ import { Route as FavouriteTracksRouteRouteImport } from './routes/favourite-tra
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PlaylistAllRouteRouteImport } from './routes/playlist/all/route'
 import { Route as PlaylistPlaylistIdRouteRouteImport } from './routes/playlist/$playlistId/route'
+import { Route as ArtistAllRouteRouteImport } from './routes/artist/all/route'
+import { Route as ArtistArtistRouteRouteImport } from './routes/artist/$artist/route'
 
 const SettingsRouteRoute = SettingsRouteRouteImport.update({
   id: '/settings',
@@ -40,11 +42,23 @@ const PlaylistPlaylistIdRouteRoute = PlaylistPlaylistIdRouteRouteImport.update({
   path: '/playlist/$playlistId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtistAllRouteRoute = ArtistAllRouteRouteImport.update({
+  id: '/artist/all',
+  path: '/artist/all',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtistArtistRouteRoute = ArtistArtistRouteRouteImport.update({
+  id: '/artist/$artist',
+  path: '/artist/$artist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/favourite-tracks': typeof FavouriteTracksRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/artist/$artist': typeof ArtistArtistRouteRoute
+  '/artist/all': typeof ArtistAllRouteRoute
   '/playlist/$playlistId': typeof PlaylistPlaylistIdRouteRoute
   '/playlist/all': typeof PlaylistAllRouteRoute
 }
@@ -52,6 +66,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/favourite-tracks': typeof FavouriteTracksRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/artist/$artist': typeof ArtistArtistRouteRoute
+  '/artist/all': typeof ArtistAllRouteRoute
   '/playlist/$playlistId': typeof PlaylistPlaylistIdRouteRoute
   '/playlist/all': typeof PlaylistAllRouteRoute
 }
@@ -60,6 +76,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/favourite-tracks': typeof FavouriteTracksRouteRoute
   '/settings': typeof SettingsRouteRoute
+  '/artist/$artist': typeof ArtistArtistRouteRoute
+  '/artist/all': typeof ArtistAllRouteRoute
   '/playlist/$playlistId': typeof PlaylistPlaylistIdRouteRoute
   '/playlist/all': typeof PlaylistAllRouteRoute
 }
@@ -69,6 +87,8 @@ export interface FileRouteTypes {
     | '/'
     | '/favourite-tracks'
     | '/settings'
+    | '/artist/$artist'
+    | '/artist/all'
     | '/playlist/$playlistId'
     | '/playlist/all'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +96,8 @@ export interface FileRouteTypes {
     | '/'
     | '/favourite-tracks'
     | '/settings'
+    | '/artist/$artist'
+    | '/artist/all'
     | '/playlist/$playlistId'
     | '/playlist/all'
   id:
@@ -83,6 +105,8 @@ export interface FileRouteTypes {
     | '/'
     | '/favourite-tracks'
     | '/settings'
+    | '/artist/$artist'
+    | '/artist/all'
     | '/playlist/$playlistId'
     | '/playlist/all'
   fileRoutesById: FileRoutesById
@@ -91,6 +115,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FavouriteTracksRouteRoute: typeof FavouriteTracksRouteRoute
   SettingsRouteRoute: typeof SettingsRouteRoute
+  ArtistArtistRouteRoute: typeof ArtistArtistRouteRoute
+  ArtistAllRouteRoute: typeof ArtistAllRouteRoute
   PlaylistPlaylistIdRouteRoute: typeof PlaylistPlaylistIdRouteRoute
   PlaylistAllRouteRoute: typeof PlaylistAllRouteRoute
 }
@@ -132,6 +158,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaylistPlaylistIdRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/artist/all': {
+      id: '/artist/all'
+      path: '/artist/all'
+      fullPath: '/artist/all'
+      preLoaderRoute: typeof ArtistAllRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artist/$artist': {
+      id: '/artist/$artist'
+      path: '/artist/$artist'
+      fullPath: '/artist/$artist'
+      preLoaderRoute: typeof ArtistArtistRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -139,6 +179,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FavouriteTracksRouteRoute: FavouriteTracksRouteRoute,
   SettingsRouteRoute: SettingsRouteRoute,
+  ArtistArtistRouteRoute: ArtistArtistRouteRoute,
+  ArtistAllRouteRoute: ArtistAllRouteRoute,
   PlaylistPlaylistIdRouteRoute: PlaylistPlaylistIdRouteRoute,
   PlaylistAllRouteRoute: PlaylistAllRouteRoute,
 }

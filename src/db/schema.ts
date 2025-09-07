@@ -81,3 +81,14 @@ export const tracksToPlaylistsRelation = relations(
     }),
   })
 )
+export const favouriteArtists = sqliteTable('favouriteArtists', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$default(() => crypto.randomUUID()),
+  created_at: integer('created_at')
+    .notNull()
+    .$defaultFn(() => getCurrentUnixTimestamp()),
+  starred: integer('starred'),
+  artist: text('artist').notNull().unique(),
+})
